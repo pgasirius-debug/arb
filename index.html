@@ -1,1 +1,258 @@
-<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Библиотека АРБ</title><style>*{margin:0;padding:0;box-sizing:border-box}:root{--primary:#2c3e50;--secondary:#3498db;--success:#27ae60;--danger:#e74c3c;--light:#ecf0f1;--dark:#2c3e50;--border-radius:12px;--transition:all .3s ease}body{font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;background:#0ABAB5;min-height:100vh;padding:20px;color:var(--dark)}.container{max-width:1200px;margin:0 auto}header{background:white;padding:30px;border-radius:var(--border-radius);box-shadow:0 10px 30px rgba(0,0,0,.1);margin-bottom:30px;text-align:center;display:flex;flex-direction:column;align-items:center}.header-logo{max-width:200px;height:auto;margin-bottom:20px;object-fit:contain}h1{font-size:2.5em;color:var(--primary);margin-bottom:10px}.subtitle{color:#7f8c8d;font-size:1.1em}.login-bar{width:100%;max-width:440px;margin-top:20px;padding:10px 15px;border-radius:999px;background:#f8f9fb;border:1px solid #dde3ea;display:flex;align-items:center;gap:8px;font-size:.9em}.login-status{display:flex;align-items:center;gap:6px;color:#7f8c8d;margin-right:auto}.login-dot{width:8px;height:8px;border-radius:50%;background:#95a5a6}.login-dot.admin{background:#27ae60}.login-input{border-radius:999px;border:1px solid #dfe6ee;padding:4px 8px;font-size:.85em;width:90px}.login-input::placeholder{color:#b0b8c2}.login-btn{border-radius:999px;border:none;padding:6px 10px;font-size:.85em;font-weight:600;cursor:pointer;background:rgba(52,152,219,.12);color:var(--secondary);border:1px solid rgba(52,152,219,.6);transition:var(--transition)}.login-btn:hover{background:rgba(52,152,219,.22);transform:translateY(-1px)}.login-btn.logout{background:rgba(231,76,60,.1);color:#e74c3c;border-color:rgba(231,76,60,.6)}.login-btn.logout:hover{background:rgba(231,76,60,.2)}.books-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:25px;margin-bottom:30px}.book-card{background:white;padding:25px;border-radius:var(--border-radius);box-shadow:0 5px 15px rgba(0,0,0,.08);transition:var(--transition)}.book-card:hover{transform:translateY(-5px);box-shadow:0 8px 25px rgba(0,0,0,.15)}.book-card h3{color:var(--primary);margin-bottom:10px;font-size:1.3em}.author{color:#7f8c8d;margin-bottom:15px;font-style:italic}.status-badge{display:inline-block;padding:8px 16px;border-radius:20px;font-size:.85em;font-weight:600;margin-bottom:15px}.status-badge.available{background:#d5f4e6;color:#27ae60}.status-badge.unavailable{background:#fadbd8;color:#e74c3c}.toggle-btn,.delete-btn{border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:.9em;font-weight:600;transition:var(--transition);margin-right:8px}.toggle-btn{background:var(--secondary);color:white}.toggle-btn:hover{background:#2980b9;transform:scale(1.05)}.delete-btn{display:none;background:var(--danger);color:white}.admin-mode .delete-btn{display:inline-block}.delete-btn:hover{background:#c0392b;transform:scale(1.05)}.controls{background:white;padding:30px;border-radius:var(--border-radius);box-shadow:0 5px 15px rgba(0,0,0,.08)}form{display:grid;gap:15px}input,select{padding:12px 15px;border:2px solid var(--light);border-radius:8px;font-size:1em;transition:var(--transition)}input:focus,select:focus{outline:none;border-color:var(--secondary);box-shadow:0 0 0 3px rgba(52,152,219,.1)}button[type="submit"]{background:var(--success);color:white;border:none;padding:12px 25px;border-radius:8px;font-size:1em;font-weight:600;cursor:pointer;transition:var(--transition)}button[type="submit"]:hover{background:#229954;transform:translateY(-2px);box-shadow:0 5px 15px rgba(39,174,96,.3)}@media(max-width:768px){.books-grid{grid-template-columns:1fr}}</style></head><body><div class="container"><header><img src="logo.png" alt="Логотип АРБ" class="header-logo"><h1>Библиотека АРБ</h1><p class="subtitle">Общая коллекция книг АРБ</p><div class="login-bar"><div class="login-status"><div class="login-dot" id="statusDot"></div><span id="statusText">Режим просмотра</span></div><input type="text" id="usernameInput" placeholder="Логин" class="login-input"><input type="password" id="passwordInput" placeholder="Пароль" class="login-input"><button onclick="toggleAdmin()" class="login-btn" id="loginBtn">Войти</button></div></header><div class="books-grid" id="booksGrid"></div><div class="controls"><h2>Добавить книгу</h2><form onsubmit="addBook(event)"><input type="text" id="titleInput" placeholder="Название книги" required><input type="text" id="authorInput" placeholder="Автор" required><select id="statusSelect"><option value="Доступна">Доступна</option><option value="Недоступна">Недоступна</option></select><button type="submit">+ Добавить книгу</button></form></div></div><script>const API_URL='https://script.google.com/macros/s/AKfycbzEpsnmAJPz5i054Ay8tziLWeUNP4AzH6o2reI3jLbY9-1OIz7zxX9rrIs4iBag1ojSYQ/exec';let isAdmin=false;async function loadBooks(){try{const response=await fetch(API_URL);const books=await response.json();renderBooks(books)}catch(error){console.error('Error loading books:',error);renderBooks([{id:1,title:'Мастер и Маргарита',author:'М. Булгаков',genre:'Доступна'},{id:2,title:'1984',author:'Дж. Оруэлл',genre:'Недоступна'},{id:3,title:'Преступление и наказание',author:'Ф. Достоевский',genre:'Доступна'}])}}function renderBooks(books){const grid=document.getElementById('booksGrid');grid.innerHTML='';books.forEach(book=>{const statusClass=book.genre==='Доступна'?'available':'unavailable';const card=document.createElement('div');card.className='book-card';card.innerHTML=`<h3>${book.title}</h3><p class="author">${book.author}</p><span class="status-badge ${statusClass}">${book.genre}</span><br><button class="toggle-btn" onclick="toggleStatus(${book.id})">Сменить статус</button><button class="delete-btn" onclick="deleteBook(${book.id})">Удалить</button>`;grid.appendChild(card)})}async function addBook(e){e.preventDefault();const title=document.getElementById('titleInput').value;const author=document.getElementById('authorInput').value;const genre=document.getElementById('statusSelect').value;try{const url=`${API_URL}?action=add&title=${encodeURIComponent(title)}&author=${encodeURIComponent(author)}&year=&genre=${encodeURIComponent(genre)}`;const response=await fetch(url);const result=await response.json();if(result.success){document.getElementById('titleInput').value='';document.getElementById('authorInput').value='';document.getElementById('statusSelect').value='Доступна';loadBooks()}else{alert('Ошибка при добавлении книги')}}catch(error){console.error('Error adding book:',error);alert('Ошибка сети: '+error.message)}}async function toggleStatus(id){try{const url=`${API_URL}?action=toggle&id=${id}`;const response=await fetch(url);const result=await response.json();if(result.success){loadBooks()}else{alert('Ошибка при смене статуса')}}catch(error){console.error('Error toggling status:',error);alert('Ошибка сети: '+error.message)}}async function deleteBook(id){if(!isAdmin){alert('Только администратор может удалять книги');return}if(!confirm('Удалить эту книгу?'))return;try{const url=`${API_URL}?action=delete&id=${id}`;const response=await fetch(url);const result=await response.json();if(result.success){loadBooks()}else{alert('Ошибка при удалении')}}catch(error){console.error('Error deleting book:',error);alert('Ошибка сети: '+error.message)}}function toggleAdmin(){const username=document.getElementById('usernameInput').value;const password=document.getElementById('passwordInput').value;if(!isAdmin){if(username==='admin'&&password==='admin'){isAdmin=true;document.body.classList.add('admin-mode');document.getElementById('statusDot').classList.add('admin');document.getElementById('statusText').textContent='Режим администратора';document.getElementById('loginBtn').textContent='Выйти';document.getElementById('loginBtn').classList.add('logout');document.getElementById('usernameInput').value='';document.getElementById('passwordInput').value=''}else{alert('Неверный логин или пароль')}}else{isAdmin=false;document.body.classList.remove('admin-mode');document.getElementById('statusDot').classList.remove('admin');document.getElementById('statusText').textContent='Режим просмотра';document.getElementById('loginBtn').textContent='Войти';document.getElementById('loginBtn').classList.remove('logout')}}loadBooks()</script></body></html>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Библиотека АРБ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 30px;
+        }
+        .login-section, .admin-section, .books-section {
+            margin-bottom: 30px;
+        }
+        .hidden {
+            display: none;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+        button:hover {
+            background: #764ba2;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #667eea;
+            color: white;
+        }
+        .status-available {
+            color: green;
+            font-weight: bold;
+        }
+        .status-unavailable {
+            color: red;
+            font-weight: bold;
+        }
+        .delete-btn {
+            background: #e74c3c;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+        .toggle-btn {
+            background: #3498db;
+            padding: 5px 10px;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+        .toggle-btn:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 Библиотека АРБ</h1>
+        
+        <!-- Секция входа -->
+        <div id="loginSection" class="login-section">
+            <h2>Вход для администратора</h2>
+            <input type="text" id="username" placeholder="Имя пользователя">
+            <input type="password" id="password" placeholder="Пароль">
+            <button onclick="login()">Войти</button>
+        </div>
+
+        <!-- Секция администратора -->
+        <div id="adminSection" class="admin-section hidden">
+            <h2>Добавить книгу</h2>
+            <input type="text" id="title" placeholder="Название книги">
+            <input type="text" id="author" placeholder="Автор">
+            <button onclick="addBook()">Добавить</button>
+            <button onclick="logout()">Выйти</button>
+        </div>
+
+        <!-- Секция книг -->
+        <div id="booksSection" class="books-section">
+            <h2>Список книг</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Название</th>
+                        <th>Автор</th>
+                        <th>Статус</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="booksTable">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwpAL_7SEGBk4BNs9HHn87FHj-8LWkD57zPr0hthb7WDOxjD3feXiqk0MYBxWo4KRV/exec';
+        let isAdmin = false;
+
+        // Загрузка книг при старте
+        loadBooks();
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === 'admin' && password === 'admin') {
+                isAdmin = true;
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('adminSection').classList.remove('hidden');
+                loadBooks();
+            } else {
+                alert('Неверные данные!');
+            }
+        }
+
+        function logout() {
+            isAdmin = false;
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('adminSection').classList.add('hidden');
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            loadBooks();
+        }
+
+        async function loadBooks() {
+            try {
+                const response = await fetch(API_URL);
+                const books = await response.json();
+                displayBooks(books);
+            } catch (error) {
+                console.error('Ошибка загрузки:', error);
+            }
+        }
+
+        function displayBooks(books) {
+            const table = document.getElementById('booksTable');
+            table.innerHTML = '';
+            
+            books.forEach(book => {
+                const row = table.insertRow();
+                row.innerHTML = `
+                    <td>${book.id}</td>
+                    <td>${book.title}</td>
+                    <td>${book.author}</td>
+                    <td class="${book.status === 'Доступна' ? 'status-available' : 'status-unavailable'}">
+                        ${book.status}
+                    </td>
+                    <td>
+                        ${isAdmin ? `
+                            <button class="toggle-btn" onclick="toggleStatus(${book.id})">Изменить статус</button>
+                            <button class="delete-btn" onclick="deleteBook(${book.id})">Удалить</button>
+                        ` : ''}
+                    </td>
+                `;
+            });
+        }
+
+        async function addBook() {
+            const title = document.getElementById('title').value;
+            const author = document.getElementById('author').value;
+            
+            if (!title || !author) {
+                alert('Заполните все поля!');
+                return;
+            }
+
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'add',
+                        title: title,
+                        author: author
+                    })
+                });
+                
+                document.getElementById('title').value = '';
+                document.getElementById('author').value = '';
+                loadBooks();
+            } catch (error) {
+                console.error('Ошибка добавления:', error);
+            }
+        }
+
+        async function toggleStatus(id) {
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'toggleStatus',
+                        id: id
+                    })
+                });
+                loadBooks();
+            } catch (error) {
+                console.error('Ошибка изменения статуса:', error);
+            }
+        }
+
+        async function deleteBook(id) {
+            if (confirm('Удалить эту книгу?')) {
+                try {
+                    await fetch(API_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            action: 'delete',
+                            id: id
+                        })
+                    });
+                    loadBooks();
+                } catch (error) {
+                    console.error('Ошибка удаления:', error);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
