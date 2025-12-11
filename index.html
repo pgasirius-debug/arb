@@ -1,386 +1,345 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <title>Библиотека АРБ</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f4f5f7;
-      color: #222;
-    }
-    header {
-      background: #243b53;
-      color: #fff;
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 20px;
-    }
-    main {
-      max-width: 960px;
-      margin: 16px auto 32px;
-      padding: 0 16px;
-    }
-    section {
-      background: #fff;
-      border-radius: 8px;
-      padding: 16px 16px 20px;
-      margin-bottom: 16px;
-      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
-    }
-    h2 {
-      margin-top: 0;
-      font-size: 18px;
-    }
-    .form-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 8px;
-    }
-    input[type="text"],
-    input[type="password"] {
-      padding: 8px 10px;
-      border-radius: 4px;
-      border: 1px solid #cbd2e1;
-      min-width: 0;
-      flex: 1 1 160px;
-      font-size: 14px;
-    }
-    button {
-      padding: 8px 12px;
-      border-radius: 4px;
-      border: none;
-      background: #2563eb;
-      color: #fff;
-      cursor: pointer;
-      font-size: 14px;
-      white-space: nowrap;
-    }
-    button.secondary {
-      background: #64748b;
-    }
-    button.danger {
-      background: #dc2626;
-    }
-    button:disabled {
-      opacity: 0.6;
-      cursor: default;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 8px;
-      font-size: 14px;
-    }
-    th, td {
-      padding: 8px 6px;
-      border-bottom: 1px solid #e2e8f0;
-      text-align: left;
-      vertical-align: middle;
-    }
-    th {
-      background: #f8fafc;
-      font-weight: 600;
-    }
-    .status-free {
-      color: #15803d;
-      font-weight: 600;
-    }
-    .status-busy {
-      color: #b91c1c;
-      font-weight: 600;
-    }
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 2px 6px;
-      border-radius: 999px;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-      background: #e2e8f0;
-      color: #475569;
-      margin-left: 8px;
-    }
-    .badge-admin {
-      background: #f97316;
-      color: #fff;
-    }
-    .top-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .small {
-      font-size: 12px;
-      color: #64748b;
-    }
-  </style>
+    <meta charset="utf-8" />
+    <title>Библиотека АРБ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f5f7;
+            color: #222;
+        }
+        header {
+            background: #243b53;
+            color: #fff;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 20px;
+        }
+        .status-badge {
+            background: #28a745;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .status-badge.offline {
+            background: #dc3545;
+        }
+        main {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .section h2 {
+            margin-top: 0;
+        }
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        input[type="text"], input[type="password"] {
+            flex: 1;
+            min-width: 200px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background: #5474ab;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #3d5a8c;
+        }
+        button.danger {
+            background: #dc3545;
+        }
+        button.danger:hover {
+            background: #c82333;
+        }
+        button.secondary {
+            background: #6c757d;
+        }
+        button.secondary:hover {
+            background: #5a6268;
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: default;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+        tr:hover {
+            background: #f8f9fa;
+        }
+        .status-available {
+            color: green;
+            font-weight: bold;
+        }
+        .status-busy {
+            color: red;
+            font-weight: bold;
+        }
+        .toggle-btn {
+            background: #3498db;
+            padding: 5px 10px;
+        }
+        .toggle-btn:hover {
+            background: #2980b9;
+        }
+        .delete-btn {
+            background: #e74c3c;
+            padding: 5px 10px;
+            margin-left: 5px;
+        }
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+        .admin-panel {
+            display: none;
+            margin-top: 8px;
+        }
+        .admin-panel.show {
+            display: block;
+        }
+        .admin-info {
+            background: #ffeaa7;
+            padding: 10px;
+            border-left: 4px solid #fdcb6e;
+            margin-bottom: 15px;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .loading::after {
+            content: "...";
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+        @keyframes dots {
+            0%, 20% { content: "."; }
+            40% { content: ".."; }
+            60% { content: "..."; }
+            80%, 100% { content: ""; }
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            border: 1px solid #f5c6cb;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
 </head>
 <body>
-<header>
-  <div>
-    <h1>Библиотека АРБ</h1>
-    <div class="small">Офисная библиотека — общая база книг</div>
-  </div>
-  <div id="adminBadge" class="badge" style="display:none;">Не админ</div>
-</header>
-
-<main>
-  <section>
-    <div class="top-row">
-      <h2>Добавить книгу (для всех)</h2>
-      <div class="small">Любой может добавить книгу в общую базу</div>
-    </div>
-    <div class="form-row">
-      <input id="publicTitle" type="text" placeholder="Название книги">
-      <input id="publicAuthor" type="text" placeholder="Автор">
-      <button type="button" onclick="publicAddBook()">Добавить</button>
-    </div>
-  </section>
-
-  <section>
-    <div class="top-row">
-      <h2>Список книг</h2>
-      <div class="small" id="booksMeta"></div>
-    </div>
-    <table>
-      <thead>
-      <tr>
-        <th>Название</th>
-        <th>Автор</th>
-        <th>Статус</th>
-        <th>Действия</th>
-      </tr>
-      </thead>
-      <tbody id="booksTableBody">
-      <tr><td colspan="4">Загрузка...</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section>
-    <div class="top-row">
-      <h2>Админ-панель</h2>
-      <div class="small">Удалять книги может только администратор</div>
-    </div>
-
-    <div id="adminLoginBlock">
-      <div class="form-row">
-        <input id="adminLogin" type="text" placeholder="Логин админа">
-        <input id="adminPassword" type="password" placeholder="Пароль админа">
-        <button type="button" onclick="adminLogin()">Войти</button>
-      </div>
-    </div>
-
-    <div id="adminInfoBlock" style="display:none; margin-top:8px;">
-      <div class="form-row">
-        <div class="small">Режим администратора активен</div>
-        <button class="secondary" type="button" onclick="adminLogout()">Выйти</button>
-      </div>
-    </div>
-  </section>
-</main>
-
-<script>
-  const API_URL = 'https://script.google.com/macros/s/AKfycbzBW66dp1ZZRvxn-vvlVzqeas0klRK3BUcdwypa01ybjctIXi3fAnR_xZwbeR17930/exec';
-  let isAdmin = false;
-  const ADMIN_LOGIN = 'admin';
-  const ADMIN_PASSWORD_VALUE = 'admin';
-
-  async function loadBooks() {
-    const tbody = document.getElementById('booksTableBody');
-    const meta = document.getElementById('booksMeta');
-    tbody.innerHTML = '<tr><td colspan="4">Загрузка...</td></tr>';
-    meta.textContent = '';
-
-    try {
-      const res = await fetch(API_URL);
-      const json = await res.json();
-      if (json.status !== 'OK') {
-        tbody.innerHTML = '<tr><td colspan="4">Ошибка загрузки данных</td></tr>';
-        return;
-      }
-      const books = json.data || [];
-      if (!books.length) {
-        tbody.innerHTML = '<tr><td colspan="4">Книг пока нет</td></tr>';
-      } else {
-        tbody.innerHTML = '';
-        books.forEach(book => {
-          const tr = document.createElement('tr');
-          const statusText = book.status || 'Доступна';
-          const isFree = statusText === 'Доступна' || statusText === 'free';
-
-          tr.innerHTML = `
-            <td>${escapeHtml(book.title || '')}</td>
-            <td>${escapeHtml(book.author || '')}</td>
-            <td>
-              <span class="${isFree ? 'status-free' : 'status-busy'}" data-status="${statusText}">
-                ${escapeHtml(statusText)}
-              </span>
-            </td>
-            <td>
-              <button type="button" class="status-btn"
-                onclick="publicToggleStatus(${book.id}, '${statusText.replace(/'/g, "\\'\"}', this)">
-                ${isFree ? 'Занять' : 'Освободить'}
-              </button>
-              ${isAdmin ? `
-                <button type="button" class="danger"
-                  onclick="deleteBook(${book.id})">
-                  Удалить
-                </button>
-              ` : ''}
-            </td>
-          `;
-          tbody.appendChild(tr);
+    <header>
+        <h1>📚 Библиотека АРБ</h1>
+        <div class="status-badge" id="statusBadge">Подключено</div>
+    </header>
+    <main>
+        <div class="section">
+            <h2>➕ Добавить книгу</h2>
+            <div class="form-row">
+                <input id="publicTitle" type="text" placeholder="Название книги" />
+                <input id="publicAuthor" type="text" placeholder="Автор" />
+                <button type="button" onclick="publicAddBook()">Добавить</button>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Вход в админку</h2>
+            <div class="form-row">
+                <input id="adminLogin" type="text" placeholder="Логин админа" />
+                <input id="adminPassword" type="password" placeholder="Пароль админа" />
+                <button type="button" onclick="adminLogin()">Войти</button>
+            </div>
+            <div id="adminInfoBlock" style="display:none; margin-top:8px;">
+                <div class="admin-info">Режим администратора активен</div>
+                <button class="secondary" type="button" onclick="adminLogout()">Выйти</button>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Список книг</h2>
+            <div id="booksMeta"></div>
+            <div id="booksTableBody" class="loading">Загрузка</div>
+        </div>
+    </main>
+    <script>
+        const API_URL = ''; // Временно пусто - используем localStorage
+        let isAdmin = false;
+        let books = [];
+        
+        // localStorage as fallback
+        function loadBooksLocal() {
+            const saved = localStorage.getItem('library_books');
+            return saved ? JSON.parse(saved) : [];
+        }
+        
+        function saveBooksLocal(data) {
+            localStorage.setItem('library_books', JSON.stringify(data));
+        }
+        
+        async function loadBooks() {
+            try {
+                const booksTableBody = document.getElementById('booksTableBody');
+                const booksMeta = document.getElementById('booksMeta');
+                const statusBadge = document.getElementById('statusBadge');
+                
+                // Load from localStorage (temporary solution)
+                books = loadBooksLocal();
+                
+                if (books.length === 0) {
+                    // Initialize with sample data if empty
+                    books = [
+                        { id: 1, title: 'Мастер и Маргарита', author: 'М. Булгаков', status: 'Доступна' }
+                    ];
+                    saveBooksLocal(books);
+                }
+                
+                statusBadge.textContent = 'Подключено (Local)';
+                statusBadge.classList.remove('offline');
+                
+                // Display books
+                let html = '<table><thead><tr><th>№</th><th>Название</th><th>Автор</th><th>Статус</th><th>Действия</th></tr></thead><tbody>';
+                books.forEach((book, idx) => {
+                    const statusClass = book.status === 'Доступна' ? 'status-available' : 'status-busy';
+                    html += `<tr>
+                        <td>${idx + 1}</td>
+                        <td>${escapeHtml(book.title)}</td>
+                        <td>${escapeHtml(book.author)}</td>
+                        <td><span class="${statusClass}">${escapeHtml(book.status)}</span></td>
+                        <td>
+                            <button class="toggle-btn" type="button" onclick="publicToggleStatus(${book.id})">Изменить статус</button>
+                            ${isAdmin ? `<button class="delete-btn" type="button" onclick="adminDeleteBook(${book.id})">Удалить</button>` : ''}
+                        </td>
+                    </tr>`;
+                });
+                html += '</tbody></table>';
+                booksTableBody.innerHTML = html;
+                booksMeta.textContent = `Всего книг: ${books.length}`;
+            } catch (error) {
+                document.getElementById('booksTableBody').innerHTML = `<div class="error">Ошибка загрузки: ${error.message}</div>`;
+                document.getElementById('statusBadge').classList.add('offline');
+                document.getElementById('statusBadge').textContent = 'Ошибка';
+            }
+        }
+        
+        function publicAddBook() {
+            const title = document.getElementById('publicTitle').value;
+            const author = document.getElementById('publicAuthor').value;
+            
+            if (!title || !author) {
+                alert('Заполните название и автора');
+                return;
+            }
+            
+            const newBook = {
+                id: Math.max(...books.map(b => b.id), 0) + 1,
+                title,
+                author,
+                status: 'Доступна'
+            };
+            
+            books.push(newBook);
+            saveBooksLocal(books);
+            
+            document.getElementById('publicTitle').value = '';
+            document.getElementById('publicAuthor').value = '';
+            
+            loadBooks();
+        }
+        
+        function publicToggleStatus(id) {
+            const book = books.find(b => b.id === id);
+            if (book) {
+                book.status = book.status === 'Доступна' ? 'Занята' : 'Доступна';
+                saveBooksLocal(books);
+                loadBooks();
+            }
+        }
+        
+        function adminLogin() {
+            const login = document.getElementById('adminLogin').value;
+            const password = document.getElementById('adminPassword').value;
+            
+            if (login === 'admin' && password === 'admin') {
+                isAdmin = true;
+                document.getElementById('adminInfoBlock').style.display = 'block';
+                document.getElementById('adminLogin').value = '';
+                document.getElementById('adminPassword').value = '';
+                loadBooks();
+            } else {
+                alert('Неверные учётные данные');
+            }
+        }
+        
+        function adminLogout() {
+            isAdmin = false;
+            document.getElementById('adminInfoBlock').style.display = 'none';
+            loadBooks();
+        }
+        
+        function adminDeleteBook(id) {
+            if (confirm('Вы уверены?')) {
+                books = books.filter(b => b.id !== id);
+                saveBooksLocal(books);
+                loadBooks();
+            }
+        }
+        
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+        
+        // Load books on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadBooks();
         });
-      }
-      const now = new Date();
-      meta.textContent = `Книг: ${books.length}, обновлено: ${now.toLocaleTimeString()}`;
-    } catch (e) {
-      tbody.innerHTML = '<tr><td colspan="4">Ошибка сети при загрузке</td></tr>';
-    }
-  }
-
-  async function publicAddBook() {
-    const titleEl = document.getElementById('publicTitle');
-    const authorEl = document.getElementById('publicAuthor');
-    const title = titleEl.value.trim();
-    const author = authorEl.value.trim();
-
-    if (!title || !author) {
-      alert('Заполни название и автора');
-      return;
-    }
-
-    try {
-      await fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify({
-          action: 'add',
-          title: title,
-          author: author
-        })
-      });
-      titleEl.value = '';
-      authorEl.value = '';
-      loadBooks();
-    } catch (e) {
-      alert('Ошибка сети при добавлении книги');
-    }
-  }
-
-  async function publicToggleStatus(id, currentStatus, btn) {
-    const row = btn.closest('tr');
-    const statusCell = row.querySelector('span[data-status]');
-
-    const isFree = currentStatus === 'Доступна' || currentStatus === 'free';
-    const newStatus = isFree ? 'Недоступна' : 'Доступна';
-
-    const oldStatus = statusCell.textContent;
-    const oldClass = statusCell.className;
-
-    statusCell.textContent = newStatus;
-    statusCell.className = isFree ? 'status-busy' : 'status-free';
-    statusCell.setAttribute('data-status', newStatus);
-    btn.textContent = isFree ? 'Освободить' : 'Занять';
-
-    try {
-      await fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify({
-          action: 'updateStatus',
-          id: id,
-          status: newStatus
-        })
-      });
-    } catch (e) {
-      statusCell.textContent = oldStatus;
-      statusCell.className = oldClass;
-      statusCell.setAttribute('data-status', currentStatus);
-      btn.textContent = isFree ? 'Занять' : 'Освободить';
-      alert('Ошибка сети при изменении статуса');
-    }
-  }
-
-  async function deleteBook(id) {
-    if (!isAdmin) {
-      alert('Удалять книги может только администратор');
-      return;
-    }
-    if (!confirm('Удалить книгу навсегда?')) return;
-
-    const password = ADMIN_PASSWORD_VALUE;
-
-    try {
-      await fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify({
-          action: 'delete',
-          id: id,
-          adminPassword: password
-        })
-      });
-      loadBooks();
-    } catch (e) {
-      alert('Ошибка сети при удалении книги');
-    }
-  }
-
-  function adminLogin() {
-    const login = document.getElementById('adminLogin').value.trim();
-    const pass = document.getElementById('adminPassword').value;
-
-    if (login === ADMIN_LOGIN && pass === ADMIN_PASSWORD_VALUE) {
-      isAdmin = true;
-      document.getElementById('adminLoginBlock').style.display = 'none';
-      document.getElementById('adminInfoBlock').style.display = 'block';
-      const badge = document.getElementById('adminBadge');
-      badge.textContent = 'Администратор';
-      badge.className = 'badge badge-admin';
-      badge.style.display = 'inline-flex';
-      loadBooks();
-    } else {
-      alert('Неверный логин или пароль');
-    }
-  }
-
-  function adminLogout() {
-    isAdmin = false;
-    document.getElementById('adminLoginBlock').style.display = 'block';
-    document.getElementById('adminInfoBlock').style.display = 'none';
-    const badge = document.getElementById('adminBadge');
-    badge.textContent = 'Не админ';
-    badge.className = 'badge';
-    badge.style.display = 'inline-flex';
-    loadBooks();
-  }
-
-  function escapeHtml(str) {
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/\"/g, '&quot;');
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const badge = document.getElementById('adminBadge');
-    badge.textContent = 'Не админ';
-    badge.style.display = 'inline-flex';
-    loadBooks();
-  });
-</script>
+    </script>
 </body>
 </html>
