@@ -96,20 +96,13 @@
     <div class="container">
         <h1>📚 Библиотека АРБ</h1>
         
-        <div id="loginSection" class="login-section">
-            <h2>Вход для администратора</h2>
-            <input type="text" id="username" placeholder="Имя пользователя">
-            <input type="password" id="password" placeholder="Пароль">
-            <button onclick="login()">Войти</button>
-        </div>
-
-        <div id="adminSection" class="admin-section hidden">
+        
+        <div id="adminSection" class="admin-section">
             <h2>Добавить книгу</h2>
             <input type="text" id="title" placeholder="Название книги">
             <input type="text" id="author" placeholder="Автор">
             <button onclick="addBook()">Добавить</button>
-            <button onclick="logout()">Выйти</button>
-        </div>
+            v>
 
         <div id="booksSection" class="books-section">
             <h2>Список книг</h2>
@@ -176,10 +169,7 @@
             books.forEach(book => {
                 const row = table.insertRow();
                 const statusClass = book.status === 'Доступна' ? 'status-available' : 'status-unavailable';
-                const actionsHTML = isAdmin 
-                    ? `<button class="toggle-btn" onclick="toggleStatus(${book.id})">Изменить статус</button><button class="delete-btn" onclick="deleteBook(${book.id})">Удалить</button>`
-                    : '';
-                
+            const actionsHTML = `<button class="toggle-btn" onclick="toggleStatus(${book.id})">Изменить статус</button>`;    
                 row.innerHTML = `
                     <td>${book.id}</td>
                     <td>${book.title}</td>
