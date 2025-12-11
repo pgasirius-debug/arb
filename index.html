@@ -5,6 +5,8 @@
     <title>Библиотека АРБ</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
+        * { box-sizing: border-box; }
+        html, body { height: 100%; }
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             margin: 0;
@@ -29,9 +31,6 @@
             padding: 4px 8px;
             border-radius: 4px;
             font-size: 12px;
-        }
-        .status-badge.offline {
-            background: #dc3545;
         }
         main {
             max-width: 1200px;
@@ -73,21 +72,11 @@
         button:hover {
             background: #3d5a8c;
         }
-        button.danger {
-            background: #dc3545;
-        }
-        button.danger:hover {
-            background: #c82333;
-        }
         button.secondary {
             background: #6c757d;
         }
         button.secondary:hover {
             background: #5a6268;
-        }
-        button:disabled {
-            opacity: 0.6;
-            cursor: default;
         }
         table {
             width: 100%;
@@ -103,20 +92,12 @@
             background: #f8f9fa;
             font-weight: bold;
         }
-        tr:hover {
-            background: #f8f9fa;
-        }
-        .status-available {
-            color: green;
-            font-weight: bold;
-        }
-        .status-busy {
-            color: red;
-            font-weight: bold;
-        }
+        .status-available { color: green; font-weight: bold; }
+        .status-busy { color: red; font-weight: bold; }
         .toggle-btn {
             background: #3498db;
             padding: 5px 10px;
+            margin-right: 5px;
         }
         .toggle-btn:hover {
             background: #2980b9;
@@ -124,17 +105,9 @@
         .delete-btn {
             background: #e74c3c;
             padding: 5px 10px;
-            margin-left: 5px;
         }
         .delete-btn:hover {
             background: #c0392b;
-        }
-        .admin-panel {
-            display: none;
-            margin-top: 8px;
-        }
-        .admin-panel.show {
-            display: block;
         }
         .admin-info {
             background: #ffeaa7;
@@ -142,43 +115,12 @@
             border-left: 4px solid #fdcb6e;
             margin-bottom: 15px;
         }
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-        }
-        .loading::after {
-            content: "...";
-            animation: dots 1.5s steps(4, end) infinite;
-        }
-        @keyframes dots {
-            0%, 20% { content: "."; }
-            40% { content: ".."; }
-            60% { content: "..."; }
-            80%, 100% { content: ""; }
-        }
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            border: 1px solid #f5c6cb;
-        }
-        .success {
-            background: #d4edda;
-            color: #155724;
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            border: 1px solid #c3e6cb;
-        }
     </style>
 </head>
 <body>
     <header>
         <h1>📚 Библиотека АРБ</h1>
-        <div class="status-badge" id="statusBadge">Подключено</div>
+        <div class="status-badge" id="statusBadge">Подключено (Local)</div>
     </header>
     <main>
         <div class="section">
@@ -196,7 +138,7 @@
                 <input id="adminPassword" type="password" placeholder="Пароль админа" />
                 <button type="button" onclick="adminLogin()">Войти</button>
             </div>
-            <div id="adminInfoBlock" style="display:none; margin-top:8px;">
+            <div id="adminInfoBlock" style="display:none;">
                 <div class="admin-info">Режим администратора активен</div>
                 <button class="secondary" type="button" onclick="adminLogout()">Выйти</button>
             </div>
@@ -204,15 +146,13 @@
         <div class="section">
             <h2>Список книг</h2>
             <div id="booksMeta"></div>
-            <div id="booksTableBody" class="loading">Загрузка</div>
+            <div id="booksTableBody"></div>
         </div>
     </main>
     <script>
-        const API_URL = ''; // Временно пусто - используем localStorage
         let isAdmin = false;
         let books = [];
         
-        // localStorage as fallback
         function loadBooksLocal() {
             const saved = localStorage.getItem('library_books');
             return saved ? JSON.parse(saved) : [];
@@ -222,49 +162,33 @@
             localStorage.setItem('library_books', JSON.stringify(data));
         }
         
-        async function loadBooks() {
-            try {
-                const booksTableBody = document.getElementById('booksTableBody');
-                const booksMeta = document.getElementById('booksMeta');
-                const statusBadge = document.getElementById('statusBadge');
-                
-                // Load from localStorage (temporary solution)
-                books = loadBooksLocal();
-                
-                if (books.length === 0) {
-                    // Initialize with sample data if empty
-                    books = [
-                        { id: 1, title: 'Мастер и Маргарита', author: 'М. Булгаков', status: 'Доступна' }
-                    ];
-                    saveBooksLocal(books);
-                }
-                
-                statusBadge.textContent = 'Подключено (Local)';
-                statusBadge.classList.remove('offline');
-                
-                // Display books
-                let html = '<table><thead><tr><th>№</th><th>Название</th><th>Автор</th><th>Статус</th><th>Действия</th></tr></thead><tbody>';
-                books.forEach((book, idx) => {
-                    const statusClass = book.status === 'Доступна' ? 'status-available' : 'status-busy';
-                    html += `<tr>
-                        <td>${idx + 1}</td>
-                        <td>${escapeHtml(book.title)}</td>
-                        <td>${escapeHtml(book.author)}</td>
-                        <td><span class="${statusClass}">${escapeHtml(book.status)}</span></td>
-                        <td>
-                            <button class="toggle-btn" type="button" onclick="publicToggleStatus(${book.id})">Изменить статус</button>
-                            ${isAdmin ? `<button class="delete-btn" type="button" onclick="adminDeleteBook(${book.id})">Удалить</button>` : ''}
-                        </td>
-                    </tr>`;
-                });
-                html += '</tbody></table>';
-                booksTableBody.innerHTML = html;
-                booksMeta.textContent = `Всего книг: ${books.length}`;
-            } catch (error) {
-                document.getElementById('booksTableBody').innerHTML = `<div class="error">Ошибка загрузки: ${error.message}</div>`;
-                document.getElementById('statusBadge').classList.add('offline');
-                document.getElementById('statusBadge').textContent = 'Ошибка';
+        function loadBooks() {
+            books = loadBooksLocal();
+            
+            if (books.length === 0) {
+                books = [
+                    { id: 1, title: 'Мастер и Маргарита', author: 'М. Булгаков', status: 'Доступна' }
+                ];
+                saveBooksLocal(books);
             }
+            
+            let html = '<table><thead><tr><th>№</th><th>Название</th><th>Автор</th><th>Статус</th><th>Действия</th></tr></thead><tbody>';
+            books.forEach((book, idx) => {
+                const statusClass = book.status === 'Доступна' ? 'status-available' : 'status-busy';
+                html += `<tr>
+                    <td>${idx + 1}</td>
+                    <td>${escapeHtml(book.title)}</td>
+                    <td>${escapeHtml(book.author)}</td>
+                    <td><span class="${statusClass}">${escapeHtml(book.status)}</span></td>
+                    <td>
+                        <button class="toggle-btn" type="button" onclick="publicToggleStatus(${book.id})">Изменить</button>
+                        ${isAdmin ? `<button class="delete-btn" type="button" onclick="adminDeleteBook(${book.id})">Удалить</button>` : ''}
+                    </td>
+                </tr>`;
+            });
+            html += '</tbody></table>';
+            document.getElementById('booksTableBody').innerHTML = html;
+            document.getElementById('booksMeta').textContent = `Всего книг: ${books.length}`;
         }
         
         function publicAddBook() {
@@ -336,7 +260,6 @@
             return div.innerHTML;
         }
         
-        // Load books on page load
         document.addEventListener('DOMContentLoaded', () => {
             loadBooks();
         });
