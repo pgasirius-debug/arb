@@ -96,7 +96,6 @@
     <div class="container">
         <h1>📚 Библиотека АРБ</h1>
         
-        <!-- Секция входа -->
         <div id="loginSection" class="login-section">
             <h2>Вход для администратора</h2>
             <input type="text" id="username" placeholder="Имя пользователя">
@@ -104,7 +103,6 @@
             <button onclick="login()">Войти</button>
         </div>
 
-        <!-- Секция администратора -->
         <div id="adminSection" class="admin-section hidden">
             <h2>Добавить книгу</h2>
             <input type="text" id="title" placeholder="Название книги">
@@ -113,7 +111,6 @@
             <button onclick="logout()">Выйти</button>
         </div>
 
-        <!-- Секция книг -->
         <div id="booksSection" class="books-section">
             <h2>Список книг</h2>
             <table>
@@ -136,7 +133,6 @@
         const API_URL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLhkgVgvB0TRO1lU6iNwzvfCzb1VvSMyioVuZzp3XgsezfypZ8S46fUs366jSpDYZbzQP63oMCxZGmuWP-Txf-7Gu-z4kiNwsuL1pimJwjBX3bLrV4uIBzJ9IT9GCtK0UoWOkjtbvhplkUN9xTDqoft7KkIzxYc5BeHuH7JJSmC9R4xvFpZonMlGFsQdiIkJPtBgoV7ZsdaLYX0ScgVWN_hjeu1eV-54kuhgt2hZ1xWAtXUX71E8dotSdTLViQ&lib=MyNiX-7Aztbh1fUqAjJpLT3vFlJZZg4rI';
         let isAdmin = false;
 
-        // Загрузка книг при старте
         loadBooks();
 
         function login() {
@@ -169,6 +165,7 @@
                 displayBooks(books);
             } catch (error) {
                 console.error('Ошибка загрузки:', error);
+                alert('Ошибка загрузки книг: ' + error.message);
             }
         }
 
@@ -178,26 +175,24 @@
             
             books.forEach(book => {
                 const row = table.insertRow();
+                const statusClass = book.status === 'Доступна' ? 'status-available' : 'status-unavailable';
+                const actionsHTML = isAdmin 
+                    ? `<button class="toggle-btn" onclick="toggleStatus(${book.id})">Изменить статус</button><button class="delete-btn" onclick="deleteBook(${book.id})">Удалить</button>`
+                    : '';
+                
                 row.innerHTML = `
                     <td>${book.id}</td>
                     <td>${book.title}</td>
                     <td>${book.author}</td>
-                    <td class="${book.status === 'Доступна' ? 'status-available' : 'status-unavailable'}">
-                        ${book.status}
-                    </td>
-                    <td>
-                        ${isAdmin ? `
-                            <button class="toggle-btn" onclick="toggleStatus(${book.id})">Изменить статус</button>
-                            <button class="delete-btn" onclick="deleteBook(${book.id})">Удалить</button>
-                        ` : ''}
-                    </td>
+                    <td class="${statusClass}">${book.status}</td>
+                    <td>${actionsHTML}</td>
                 `;
             });
         }
 
         async function addBook() {
-            const title = document.getElementById('title').value;
-            const author = document.getElementById('author').value;
+            const title = document.getElementById('title').value.trim();
+            const author = document.getElementById('author').value.trim();
             
             if (!title || !author) {
                 alert('Заполните все поля!');
@@ -205,8 +200,11 @@
             }
 
             try {
-                await fetch(API_URL, {
+                const response = await fetch(API_URL, {
                     method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
                     body: JSON.stringify({
                         action: 'add',
                         title: title,
@@ -214,43 +212,68 @@
                     })
                 });
                 
+                const result = await response.json();
+                console.log('Результат добавления:', result);
+                
                 document.getElementById('title').value = '';
                 document.getElementById('author').value = '';
-                loadBooks();
+                
+                await loadBooks();
+                alert('Книга добавлена!');
             } catch (error) {
                 console.error('Ошибка добавления:', error);
+                alert('Ошибка добавления книги: ' + error.message);
             }
         }
 
         async function toggleStatus(id) {
             try {
-                await fetch(API_URL, {
+                const response = await fetch(API_URL, {
                     method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
                     body: JSON.stringify({
                         action: 'toggleStatus',
                         id: id
                     })
                 });
-                loadBooks();
+                
+                const result = await response.json();
+                console.log('Результат изменения статуса:', result);
+                
+                await loadBooks();
             } catch (error) {
                 console.error('Ошибка изменения статуса:', error);
+                alert('Ошибка изменения статуса: ' + error.message);
             }
         }
 
         async function deleteBook(id) {
-            if (confirm('Удалить эту книгу?')) {
-                try {
-                    await fetch(API_URL, {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            action: 'delete',
-                            id: id
-                        })
-                    });
-                    loadBooks();
-                } catch (error) {
-                    console.error('Ошибка удаления:', error);
-                }
+            if (!confirm('Удалить эту книгу?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: JSON.stringify({
+                        action: 'delete',
+                        id: id
+                    })
+                });
+                
+                const result = await response.json();
+                console.log('Результат удаления:', result);
+                
+                await loadBooks();
+                alert('Книга удалена!');
+            } catch (error) {
+                console.error('Ошибка удаления:', error);
+                alert('Ошибка удаления книги: ' + error.message);
             }
         }
     </script>
